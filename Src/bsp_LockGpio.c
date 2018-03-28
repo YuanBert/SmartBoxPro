@@ -3,8 +3,12 @@
 
 extern uint8_t CanId;
 
-uint8_t LockGoodsStateChangedBuffer[22][2] = {0};
-uint8_t LockPinsStateChangedBuffer[22][2] = {0};
+static uint8_t CtrlBuffer[22]= {0};
+static uint8_t NeedHandBufferFlag;
+
+
+static uint8_t LockGoodsStateChangedBuffer[22][2] = {0};
+static uint8_t LockPinsStateChangedBuffer[22][2] = {0};
 
 //LOCKERRORCODE BSP_LOCKInit(void);
 
@@ -246,13 +250,13 @@ LOCKERRORCODE BSP_LOCKUpdateOfLockPinsState(void)
 		LockPinsStateChangedBuffer[21][1] = 1;
 	}
 
-	LockPinsStateChangedBuffer[0][0] = (uint8_t)GetLockPins1State;
-	LockPinsStateChangedBuffer[1][0] = (uint8_t)GetLockPins2State;
-	LockPinsStateChangedBuffer[2][0] = (uint8_t)GetLockPins3State;
-	LockPinsStateChangedBuffer[3][0] = (uint8_t)GetLockPins4State;
-	LockPinsStateChangedBuffer[4][0] = (uint8_t)GetLockPins5State;
-	LockPinsStateChangedBuffer[5][0] = (uint8_t)GetLockPins6State;
-	LockPinsStateChangedBuffer[6][0] = (uint8_t)GetLockPins7State;
+	LockPinsStateChangedBuffer[0][0] = GetLockPins1State;
+	LockPinsStateChangedBuffer[1][0] = GetLockPins2State;
+	LockPinsStateChangedBuffer[2][0] = GetLockPins3State;
+	LockPinsStateChangedBuffer[3][0] = GetLockPins4State;
+	LockPinsStateChangedBuffer[4][0] = GetLockPins5State;
+	LockPinsStateChangedBuffer[5][0] = GetLockPins6State;
+	LockPinsStateChangedBuffer[6][0] = GetLockPins7State;
 	LockPinsStateChangedBuffer[7][0] = GetLockPins8State;
 	LockPinsStateChangedBuffer[8][0] = GetLockPins9State;
 	LockPinsStateChangedBuffer[9][0] = GetLockPins10State;
@@ -287,4 +291,137 @@ LOCKERRORCODE BSP_LOCKSendPinsChangedMessage(void)
 	return state;
 
 }
-LOCKERRORCODE BSP_LOCKWriteCtrlPin(CtrlState nCtrlState);
+LOCKERRORCODE BSP_LOCKWriteCtrlPin(uint8_t nBoxNumber, CtrlState nCtrlState)
+{
+	LOCKERRORCODE state = LOCK_OK;
+	if(nBoxNumber < 0 || nBoxNumber > 21)
+	{
+		state = LOCK_ERROR;
+		return state;
+	}
+
+	switch (nBoxNumber)
+		{
+		case 0:
+			HAL_GPIO_WritePin(LOCK_CTRL1_GPIO_Port,LOCK_CTRL1_Pin,(GPIO_PinState)nCtrlState);
+			break;
+			
+		case 1:
+			HAL_GPIO_WritePin(LOCK_CTRL2_GPIO_Port,LOCK_CTRL2_Pin,(GPIO_PinState)nCtrlState);
+			break;
+			
+		case 2:
+			HAL_GPIO_WritePin(LOCK_CTRL3_GPIO_Port,LOCK_CTRL3_Pin,(GPIO_PinState)nCtrlState);		
+			break;
+		case 3:
+			HAL_GPIO_WritePin(LOCK_CTRL4_GPIO_Port,LOCK_CTRL4_Pin,(GPIO_PinState)nCtrlState);
+			break;
+			
+		case 4:
+			HAL_GPIO_WritePin(LOCK_CTRL5_GPIO_Port,LOCK_CTRL5_Pin,(GPIO_PinState)nCtrlState);
+			break;
+			
+		case 5:
+			HAL_GPIO_WritePin(LOCK_CTRL6_GPIO_Port,LOCK_CTRL6_Pin,(GPIO_PinState)nCtrlState);		
+			break;		
+		case 6:
+			HAL_GPIO_WritePin(LOCK_CTRL7_GPIO_Port,LOCK_CTRL7_Pin,(GPIO_PinState)nCtrlState);
+			break;
+			
+		case 7:
+			HAL_GPIO_WritePin(LOCK_CTRL8_GPIO_Port,LOCK_CTRL8_Pin,(GPIO_PinState)nCtrlState);
+			break;
+			
+		case 8:
+			HAL_GPIO_WritePin(LOCK_CTRL9_GPIO_Port,LOCK_CTRL9_Pin,(GPIO_PinState)nCtrlState);		
+			break;
+		case 9:
+			HAL_GPIO_WritePin(LOCK_CTRL10_GPIO_Port,LOCK_CTRL10_Pin,(GPIO_PinState)nCtrlState);
+			break;
+			
+		case 10:
+			HAL_GPIO_WritePin(LOCK_CTRL11_GPIO_Port,LOCK_CTRL11_Pin,(GPIO_PinState)nCtrlState);
+			break;
+			
+		case 11:
+			HAL_GPIO_WritePin(LOCK_CTRL12_GPIO_Port,LOCK_CTRL12_Pin,(GPIO_PinState)nCtrlState);
+			break;
+			
+		case 12:
+			HAL_GPIO_WritePin(LOCK_CTRL13_GPIO_Port,LOCK_CTRL13_Pin,(GPIO_PinState)nCtrlState);		
+			break;
+		case 13:
+			HAL_GPIO_WritePin(LOCK_CTRL14_GPIO_Port,LOCK_CTRL14_Pin,(GPIO_PinState)nCtrlState);
+			break;
+			
+		case 14:
+			HAL_GPIO_WritePin(LOCK_CTRL15_GPIO_Port,LOCK_CTRL15_Pin,(GPIO_PinState)nCtrlState);
+			break;
+			
+		case 15:
+			HAL_GPIO_WritePin(LOCK_CTRL16_GPIO_Port,LOCK_CTRL16_Pin,(GPIO_PinState)nCtrlState);		
+			break;		
+		case 16:
+			HAL_GPIO_WritePin(LOCK_CTRL17_GPIO_Port,LOCK_CTRL17_Pin,(GPIO_PinState)nCtrlState);
+			break;
+			
+		case 17:
+			HAL_GPIO_WritePin(LOCK_CTRL18_GPIO_Port,LOCK_CTRL18_Pin,(GPIO_PinState)nCtrlState);
+			break;
+			
+		case 18:
+			HAL_GPIO_WritePin(LOCK_CTRL19_GPIO_Port,LOCK_CTRL19_Pin,(GPIO_PinState)nCtrlState);		
+			break;
+		case 19:
+			HAL_GPIO_WritePin(LOCK_CTRL20_GPIO_Port,LOCK_CTRL20_Pin,(GPIO_PinState)nCtrlState);
+			break;
+			
+		case 20:
+			HAL_GPIO_WritePin(LOCK_CTRL21_GPIO_Port,LOCK_CTRL21_Pin,(GPIO_PinState)nCtrlState);
+			break;						
+		case 21:
+			HAL_GPIO_WritePin(LOCK_CTRL22_GPIO_Port,LOCK_CTRL22_Pin,(GPIO_PinState)nCtrlState);
+			break;						
+		default:
+			
+			break;
+		}
+
+	return state;
+}
+
+
+LOCKERRORCODE BSP_LOCKWriteCtrlBuffer(uint8_t nBoxNumber)
+{
+	LOCKERRORCODE state = LOCK_OK;
+	if(nBoxNumber < 0 || nBoxNumber > 21)
+	{
+		state = LOCK_ERROR;
+		return state;
+	}
+	
+	CtrlBuffer[nBoxNumber] = 1;
+	NeedHandBufferFlag = 1;
+	return state;
+}
+LOCKERRORCODE BSP_LOCKCheckCtrlBuffer(void)
+{
+	LOCKERRORCODE state = LOCK_OK;
+	if(0 == NeedHandBufferFlag)
+	{
+		return state;
+	}
+	uint8_t i = 0;
+	for(i = 0; i < 22; i++)
+	{
+		if(1 == CtrlBuffer[i])
+		{
+			CtrlBuffer[i] = 0;
+			BSP_LOCKWriteCtrlPin(i,CtrlOpen);
+		}
+	}
+	NeedHandBufferFlag = 0;
+	return state;
+}
+
+

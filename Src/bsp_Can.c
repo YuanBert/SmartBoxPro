@@ -1,14 +1,35 @@
 #include "bsp_Can.h"
 
+
+uint8_t CanId;
 static CanTxMsgTypeDef          TxMessage;
 static CanRxMsgTypeDef          RxMessage;
 
 LOCKERRORCODE BSP_CanInit(void)
 {
 	LOCKERRORCODE state = LOCK_OK;
+	CanId = 0;
 	
 	hcan.pTxMsg = &TxMessage;
   	hcan.pRxMsg = &RxMessage;
+
+	//ªÒ»°CanId÷µ
+	if(GPIO_PIN_SET == GetAddrBit3Val)
+	{
+		CanId |= 0x08;
+	}
+	if(GPIO_PIN_SET == GetAddrBit2Val)
+	{
+		CanId |= 0x04;
+	}
+	if(GPIO_PIN_SET == GetAddrBit1Val)
+	{
+		CanId |= 0x02;
+	}
+	if(GPIO_PIN_SET == GetAddrBit0Val)
+	{
+		CanId |= 0x01;
+	}
 
 	return state;
 }

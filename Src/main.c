@@ -43,13 +43,21 @@
 #include "gpio.h"
 
 /* USER CODE BEGIN Includes */
-
+#include "bsp_Can.h"
+#include "bsp_LockGpio.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
+extern uint8_t CanId;
+uint16_t Tim4Cnt;
+uint8_t  Tim4CntFlag;
+
+uint16_t Tim5Cnt;
+uint8_t  Tim5CntFlag;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -101,7 +109,11 @@ int main(void)
   /* Initialize interrupts */
   MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
-  
+  BSP_CanInit();
+  BSP_CanFilterConfig();
+  HAL_CAN_Receive_IT(&hcan, CAN_FIFO0);
+  HAL_TIM_Base_Start_IT(&htim4);
+  HAL_TIM_Base_Start_IT(&htim5);
 
   /* USER CODE END 2 */
 
@@ -113,29 +125,26 @@ int main(void)
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
-    if(HAL_CAN_Transmit(&hcan, 20) != HAL_OK)
-    {
-        Error_Handler();
-    }
-    if(HAL_CAN_GetState(&hcan) != HAL_CAN_STATE_READY)
-    {
-      Error_Handler();
-    } 
+
+  	if(Tim4CntFlag)
+  	{
+		Tim4CntFlag = 0;
+		BSP_LOCKUpdateOfGoodsState();
+		BSP_LOCKSendGoodsChangedMessage();
+
+		BSP_LOCKUpdateOfLockPinsState();
+		BSP_LOCKSendPinsChangedMessage();
+	}
+
+	BSP_LOCKCheckCtrlBuffer();
+
+	if(Tim5CntFlag)
+	{
+		Tim5CntFlag = 0;
+		BSP_CanSendDatas(CanId,0x01,0x02,0x03);
+	}
+
     
-    if(HAL_CAN_Receive(&hcan, CAN_FIFO0, 10) != HAL_OK)
-    {
-      Error_Handler();
-    }
-    if(HAL_CAN_GetState(&hcan)!= HAL_CAN_STATE_READY)
-    {
-      Error_Handler();
-    }
-    if(0x123 == hcan.pRxMsg->StdId)
-    {
-      HAL_GPIO_TogglePin(LED2_GPIO_Port,LED2_Pin);
-    }
-    
-    HAL_Delay(1000);
   }
   /* USER CODE END 3 */
 
@@ -215,6 +224,61 @@ static void MX_NVIC_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+/**
+  * @brief  Transmission  complete callback in non blocking mode 
+  * @param  hcan: pointer to a CAN_HandleTypeDef structure that contains
+  *         the configuration information for the specified CAN.
+  * @retval None
+  */
+void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* hcan)
+{
+  /* Prevent unused argument(s) compilation warning */
+  UNUSED(hcan);
+  /* NOTE : This function Should not be modified, when the callback is needed,
+            the HAL_CAN_RxCpltCallback can be implemented in the user file
+   */
+	if(CanId == (hcan->pRxMsg->StdId))
+	{
+		BSP_LOCKWriteCtrlBuffer(hcan->pRxMsg->Data[0]);
+		//BSP_CanSendDatas(hcan->pRxMsg->StdId, hcan->pRxMsg->Data[0], hcan->pRxMsg->Data[1], hcan->pRxMsg->Data[2]);
+		HAL_GPIO_TogglePin(LED2_GPIO_Port, LED2_Pin);
+		HAL_CAN_Receive_IT(hcan, CAN_FIFO0);
+	}
+}
+/**
+  * @brief  Period elapsed callback in non blocking mode 
+  * @param  htim : TIM handle
+  * @retval None
+  */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  /* Prevent unused argument(s) compilation warning */
+  UNUSED(htim);
+  /* NOTE : This function Should not be modified, when the callback is needed,
+            the __HAL_TIM_PeriodElapsedCallback could be implemented in the user file
+   */
+   if(htim4.Instance == htim->Instance)
+   {
+		Tim4Cnt++;
+		if(Tim4Cnt > 49)
+		{
+			Tim4Cnt = 0;
+			Tim4CntFlag = 1;
+		}
+   }
+
+   if(htim5.Instance == htim->Instance)
+   {
+		Tim5Cnt ++;
+		if(Tim5Cnt > 5000)
+		{
+			Tim5Cnt = 0;
+			Tim5CntFlag = 1;
+		}
+   }
+
+}
+
 
 /* USER CODE END 4 */
 
