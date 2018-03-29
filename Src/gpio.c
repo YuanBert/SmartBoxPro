@@ -71,21 +71,24 @@ void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOE, LOCK_CTRL11_Pin|LOCK_CTRL1_Pin|LOCK_CTRL12_Pin|LOCK_CTRL13_Pin 
-                          |LOCK_CTRL14_Pin, GPIO_PIN_RESET);
+                          |LOCK_CTRL14_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOC, LOCK_CTRL10_Pin|LOCK_CTRL9_Pin|LOCK_CTRL8_Pin|LOCK_CTRL3_Pin 
-                          |LOCK_CTRL22_Pin, GPIO_PIN_RESET);
+                          |LOCK_CTRL22_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, LOCK_CTRL7_Pin|LOCK_CTRL6_Pin|LOCK_CTRL5_Pin|LOCK_CTRL4_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, LOCK_CTRL7_Pin|LOCK_CTRL6_Pin|LOCK_CTRL4_Pin, GPIO_PIN_SET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(LOCK_CTRL5_GPIO_Port, LOCK_CTRL5_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, LOCK_CTRL2_Pin|LOCK_CTRL15_Pin|LOCK_CTRL16_Pin|LOCK_CTRL17_Pin 
-                          |LED1_Pin|LED2_Pin, GPIO_PIN_RESET);
+                          |LED1_Pin|LED2_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, LOCK_CTRL18_Pin|LOCK_CTRL19_Pin|LOCK_CTRL20_Pin|LOCK_CTRL21_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOD, LOCK_CTRL18_Pin|LOCK_CTRL19_Pin|LOCK_CTRL20_Pin|LOCK_CTRL21_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pins : PEPin PEPin PEPin PEPin 
                            PEPin PEPin PEPin PEPin 

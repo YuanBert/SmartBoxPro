@@ -205,20 +205,21 @@
 
 /* USER CODE BEGIN Private defines */
 
+
+
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
  extern "C" {
 #endif
-
-
-typedef enum{
-	LOCK_OK = 0U,
-	LOCK_ERROR,
-	LOCK_TIMEOUT,
-	LOCK_OTHER_ERROR	
-}LOCKERRORCODE;
-	
+   
+ typedef enum {
+  LOCK_OK = 0U,
+  LOCK_ERROR,
+  LOCK_TIMEOUT,
+  LOCK_OTHERERROR
+  }LOCKERRORCODE;
+  
 void _Error_Handler(char *, int);
 
 #define Error_Handler() _Error_Handler(__FILE__, __LINE__)

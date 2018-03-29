@@ -1,6 +1,6 @@
 Configuration	MSmartBoxV1.0
 STM32CubeMX 	4.24.0
-Date	03/27/2018
+Date	03/29/2018
 MCU	STM32F103VCTx
 
 

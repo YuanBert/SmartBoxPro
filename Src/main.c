@@ -114,6 +114,7 @@ int main(void)
   HAL_CAN_Receive_IT(&hcan, CAN_FIFO0);
   HAL_TIM_Base_Start_IT(&htim4);
   HAL_TIM_Base_Start_IT(&htim5);
+  BSP_LOCKInit();
 
   /* USER CODE END 2 */
 
