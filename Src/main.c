@@ -54,7 +54,7 @@
 extern uint8_t CanId;
 uint16_t Tim4Cnt;
 uint8_t  Tim4CntFlag;
-
+uint8_t checkFlag;
 uint16_t Tim5Cnt;
 uint8_t  Tim5CntFlag;
 
@@ -138,12 +138,15 @@ int main(void)
 	}
 
 	BSP_LOCKCheckCtrlBuffer();
-
+/*
 	if(Tim5CntFlag)
 	{
 		Tim5CntFlag = 0;
 		BSP_CanSendDatas(CanId,0x01,0x02,0x03);
 	}
+ */   
+//    BSP_LOCKWriteCtrlPin(0,(CtrlState)0);
+//    HAL_Delay(500);
 
     
   }
@@ -240,6 +243,7 @@ void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* hcan)
    */
 	if(CanId == (hcan->pRxMsg->StdId))
 	{
+      
 		BSP_LOCKWriteCtrlBuffer(hcan->pRxMsg->Data[0]);
 		//BSP_CanSendDatas(hcan->pRxMsg->StdId, hcan->pRxMsg->Data[0], hcan->pRxMsg->Data[1], hcan->pRxMsg->Data[2]);
 		HAL_GPIO_TogglePin(LED2_GPIO_Port, LED2_Pin);

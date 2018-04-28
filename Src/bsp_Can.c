@@ -30,7 +30,9 @@ LOCKERRORCODE BSP_CanInit(void)
 	{
 		CanId |= 0x01;
 	}
-
+    
+    HAL_CAN_Receive_IT(&hcan, CAN_FIFO0);
+    
 	return state;
 }
 
